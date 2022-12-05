@@ -1,9 +1,9 @@
 package ru.netology.delivery.test;
 
 import com.codeborne.selenide.Configuration;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import com.codeborne.selenide.logevents.SelenideLogger;
+import io.qameta.allure.selenide.AllureSelenide;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.Keys;
 import ru.netology.delivery.data.DataGenerator;
 
@@ -12,6 +12,16 @@ import static com.codeborne.selenide.Selenide.*;
 
 class DeliveryTest {
     public DataGenerator data = new DataGenerator();
+
+    @BeforeAll
+    static void setUpAll() {
+        SelenideLogger.addListener("allure", new AllureSelenide());
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        SelenideLogger.removeListener("allure");
+    }
 
     @BeforeEach
     void setup() {
@@ -35,7 +45,7 @@ class DeliveryTest {
         $x("//input[@placeholder=\"Дата встречи\"]").sendKeys(Keys.BACK_SPACE);
         $x("//input[@placeholder=\"Дата встречи\"]").setValue(planningFirstDate);
         $("[data-test-id=\"name\"] .input__control").setValue(data.generateName("ru"));
-        $x("//input[@name=\"phone\"]").setValue(data.generatePhone ("ru"));
+        $x("//input[@name=\"phone\"]").setValue(data.generatePhone("ru"));
         $(".checkbox").click();
         $("button.button").click();
         $("[data-test-id='success-notification'] .notification__content").should(text("Встреча успешно запланирована на " + planningFirstDate));
